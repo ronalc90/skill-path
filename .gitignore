@@ -1,0 +1,50 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+skillpath
+skillpath-api
+bin/
+
+# Go
+vendor/
+go.sum
+tmp/
+coverage.out
+coverage.html
+
+# Database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Environment
+.env
+
+# Node.js
+node_modules/
+.next/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/
+CLAUDE.md
+memory/
+
+# Docker volumes
+pgdata/

@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillPath - Tu ruta hacia tu carrera tech</title>
+    <meta name="author" content="Ronald">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out both;
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.4s ease-out both;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-out both;
+        }
+
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .stagger-6 { animation-delay: 0.3s; }
+
+        .timeline-line {
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #c7d2fe, #e0e7ff);
+        }
+
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -12px rgba(79, 70, 229, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #3730a3 60%, #4338ca 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .resource-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .search-glow:focus-within {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .progress-ring {
+            transition: stroke-dashoffset 0.6s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4338ca, #4f46e5);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px -4px rgba(79, 70, 229, 0.5);
+        }
+
+        .modal-backdrop {
+            background: rgba(15, 12, 41, 0.7);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased" x-data="skillpath()" x-init="init()">
+
+    <!-- ============================================================ -->
+    <!-- NAVBAR -->
+    <!-- ============================================================ -->
+    <nav class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 transition-all duration-300"
+         :class="scrolled ? 'shadow-md' : ''"
+         @scroll.window="scrolled = window.scrollY > 20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <button @click="goHome()" class="flex items-center gap-2 group cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/40 transition-shadow">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">SkillPath</span>
+                </button>
+
+                <div class="flex items-center gap-3">
+                    <template x-if="!user">
+                        <div class="flex items-center gap-2">
+                            <button @click="showAuthModal = true; authMode = 'login'"
+                                    class="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer">
+                                Iniciar Sesion
+                            </button>
+                            <button @click="showAuthModal = true; authMode = 'register'"
+                                    class="btn-primary px-5 py-2 text-sm font-semibold text-white rounded-lg cursor-pointer">
+                                Comenzar Gratis
+                            </button>
+                        </div>
+                    </template>
+                    <template x-if="user">
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-full">
+                                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+                                    <span class="text-xs font-bold text-white" x-text="user.display_name ? user.display_name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()"></span>
+                                </div>
+                                <span class="text-sm font-medium text-primary-700 hidden sm:inline" x-text="user.display_name || user.email"></span>
+                            </div>
+                            <button @click="logout()"
+                                    class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                                    title="Cerrar sesion">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ============================================================ -->
+    <!-- HERO SECTION -->
+    <!-- ============================================================ -->
+    <section class="hero-gradient relative overflow-hidden pt-16">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 -left-32 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-indigo-300/8 rounded-full blur-2xl"></div>
+            <!-- Grid pattern -->
+            <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="animate-fade-in-up">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-primary-200 text-sm font-medium mb-6">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        Plataforma de aprendizaje tech
+                    </div>
+                </div>
+
+                <h1 class="animate-fade-in-up stagger-1 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
+                    Tu ruta personalizada hacia
+                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-purple-300 to-indigo-300">
+                        tu carrera tech
+                    </span>
+                </h1>
+
+                <p class="animate-fade-in-up stagger-2 text-lg md:text-xl text-primary-200/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    Elige una meta profesional y obten un camino curado con milestones, recursos de toda la web,
+                    quizzes de evaluacion y seguimiento de progreso.
+                    <span class="text-primary-300 font-medium">Como Duolingo, pero para tu carrera en tecnologia.</span>
+                </p>
+
+                <!-- Features pills -->
+                <div class="animate-fade-in-up stagger-3 flex flex-wrap justify-center gap-3 mb-10">
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary-100 text-sm">
+                        <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Rutas curadas por expertos
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary-100 text-sm">
+                        <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Recursos gratuitos y premium
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary-100 text-sm">
+                        <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Quizzes de evaluacion
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary-100 text-sm">
+                        <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Progreso visual
+                    </div>
+                </div>
+
+                <!-- Search bar -->
+                <div class="animate-fade-in-up stagger-4 max-w-xl mx-auto">
+                    <div class="relative search-glow rounded-2xl transition-shadow">
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                            </svg>
+                        </div>
+                        <input type="text"
+                               x-model="searchQuery"
+                               @input.debounce.400ms="search()"
+                               @keydown.enter="search()"
+                               placeholder="Busca una ruta de aprendizaje..."
+                               class="w-full pl-12 pr-28 py-4 bg-white rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none text-base shadow-xl shadow-primary-900/20">
+                        <button @click="search()"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2.5 btn-primary text-white text-sm font-semibold rounded-xl cursor-pointer">
+                            Buscar
+                        </button>
+                    </div>
+
+                    <!-- Register CTA (only when not logged in) -->
+                    <template x-if="!user">
+                        <p class="text-center text-primary-200/70 text-sm mt-5 animate-fade-in-up stagger-5">
+                            Crea tu cuenta gratis para guardar tu progreso.
+                            <button @click="showAuthModal = true; authMode = 'register'"
+                                    class="text-white font-semibold hover:text-primary-200 underline underline-offset-2 cursor-pointer ml-1">
+                                Registrate ahora
+                            </button>
+                        </p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave separator -->
+        <div class="relative">
+            <svg class="block w-full" viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px">
+                <path d="M0 60V30C240 0 480 0 720 30C960 60 1200 60 1440 30V60H0Z" fill="#f9fafb"/>
+            </svg>
+        </div>
+    </section>
+
+
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================================ -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+
+        <!-- ====================================== -->
+        <!-- PATH LIST VIEW -->
+        <!-- ====================================== -->
+        <div x-show="currentView === 'list'" x-cloak>
+
+            <!-- Search results indicator -->
+            <div x-show="searchQuery && searchResults !== null" class="mb-6 animate-slide-down">
+                <div class="flex items-center justify-between bg-primary-50 border border-primary-100 rounded-xl px-5 py-3">
+                    <p class="text-primary-700 text-sm">
+                        <span class="font-semibold" x-text="searchResults.length"></span> resultado(s) para
+                        "<span class="font-medium" x-text="searchQuery"></span>"
+                    </p>
+                    <button @click="clearSearch()" class="text-primary-500 hover:text-primary-700 text-sm font-medium flex items-center gap-1 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section title -->
+            <div class="text-center mb-10 pt-4" x-show="!searchQuery">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Explora las Rutas de Aprendizaje</h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Elige tu camino y comienza a construir tu carrera en tecnologia hoy mismo</p>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10" x-show="!searchQuery">
+                <button @click="selectedCategory = 'all'"
+                        :class="selectedCategory === 'all'
+                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
+                            : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer">
+                    Todas
+                </button>
+                <template x-for="cat in categories" :key="cat">
+                    <button @click="selectedCategory = cat"
+                            :class="selectedCategory === cat
+                                ? categoryStyle(cat).active
+                                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                            class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2">
+                        <span x-text="categoryIcon(cat)"></span>
+                        <span x-text="cat"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Loading indicator -->
+            <div x-show="loading" class="flex justify-center py-20">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="relative w-16 h-16">
+                        <div class="absolute inset-0 rounded-full border-4 border-primary-100"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-primary-600 border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-gray-400 text-sm font-medium">Cargando rutas...</p>
+                </div>
+            </div>
+
+            <!-- Path Cards Grid -->
+            <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="(path, index) in filteredPaths" :key="path.id">
+                    <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm animate-fade-in-up cursor-pointer group"
+                         :class="'stagger-' + ((index % 6) + 1)"
+                         @click="viewPath(path.slug)">
+
+                        <!-- Card top accent -->
+                        <div class="h-1.5" :class="categoryStyle(path.category).bar"></div>
+
+                        <div class="p-6">
+                            <!-- Category badge + icon -->
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide"
+                                      :class="categoryStyle(path.category).badge">
+                                    <span x-text="categoryIcon(path.category)"></span>
+                                    <span x-text="path.category"></span>
+                                </span>
+                                <img :src="path.icon_url" :alt="path.title" class="w-8 h-8 opacity-60 group-hover:opacity-100 transition-opacity" onerror="this.style.display='none'">
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2"
+                                x-text="path.title"></h3>
+
+                            <!-- Description -->
+                            <p class="text-sm text-gray-500 mb-5 line-clamp-3 leading-relaxed"
+                               x-text="path.description"></p>
+
+                            <!-- Meta info -->
+                            <div class="flex items-center gap-4 mb-5">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold"
+                                      :class="difficultyStyle(path.difficulty)">
+                                    <span x-text="difficultyLabel(path.difficulty)"></span>
+                                </span>
+                                <span class="flex items-center gap-1 text-xs text-gray-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span x-text="path.estimated_hours + 'h'"></span>
+                                </span>
+                                <span class="flex items-center gap-1 text-xs text-gray-400" x-show="path.milestone_count">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5"/>
+                                    </svg>
+                                    <span x-text="path.milestone_count + ' hitos'"></span>
+                                </span>
+                            </div>
+
+                            <!-- CTA button -->
+                            <button class="w-full py-2.5 px-4 bg-primary-50 text-primary-600 font-semibold text-sm rounded-xl
+                                           group-hover:bg-primary-600 group-hover:text-white transition-all duration-200 cursor-pointer
+                                           flex items-center justify-center gap-2">
+                                <span>Ver Ruta</span>
+                                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty state -->
+            <div x-show="!loading && filteredPaths.length === 0" class="text-center py-20">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gray-100 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No se encontraron rutas</h3>
+                <p class="text-gray-500">Intenta con otra categoria o termino de busqueda</p>
+            </div>
+        </div>
+
+
+        <!-- ====================================== -->
+        <!-- PATH DETAIL VIEW -->
+        <!-- ====================================== -->
+        <div x-show="currentView === 'detail'" x-cloak class="animate-fade-in">
+
+            <!-- Loading state -->
+            <div x-show="loadingDetail" class="flex justify-center py-20">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="relative w-16 h-16">
+                        <div class="absolute inset-0 rounded-full border-4 border-primary-100"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-primary-600 border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-gray-400 text-sm font-medium">Cargando detalle...</p>
+                </div>
+            </div>
+
+            <template x-if="currentPath && !loadingDetail">
+                <div>
+                    <!-- Back button -->
+                    <button @click="goHome()" class="flex items-center gap-2 text-gray-500 hover:text-primary-600 mb-8 transition-colors cursor-pointer group">
+                        <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                        </svg>
+                        <span class="font-medium text-sm">Volver a rutas</span>
+                    </button>
+
+                    <!-- Path header card -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10 animate-fade-in-up">
+                        <div class="h-2" :class="categoryStyle(currentPath.category).bar"></div>
+                        <div class="p-8 md:p-10">
+                            <div class="flex flex-col md:flex-row md:items-start gap-6">
+                                <!-- Path icon -->
+                                <div class="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+                                     :class="categoryStyle(currentPath.category).iconBg">
+                                    <img :src="currentPath.icon_url" :alt="currentPath.title" class="w-12 h-12" onerror="this.parentElement.innerHTML='<svg class=\'w-10 h-10 text-gray-400\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5\'/></svg>'">
+                                </div>
+
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide"
+                                              :class="categoryStyle(currentPath.category).badge">
+                                            <span x-text="categoryIcon(currentPath.category)"></span>
+                                            <span x-text="currentPath.category"></span>
+                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold"
+                                              :class="difficultyStyle(currentPath.difficulty)"
+                                              x-text="difficultyLabel(currentPath.difficulty)"></span>
+                                    </div>
+
+                                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3" x-text="currentPath.title"></h1>
+                                    <p class="text-gray-500 leading-relaxed mb-6" x-text="currentPath.description"></p>
+
+                                    <!-- Stats row -->
+                                    <div class="flex flex-wrap items-center gap-6">
+                                        <div class="flex items-center gap-2 text-gray-600">
+                                            <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
+                                                <svg class="w-4.5 h-4.5 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-400">Duracion</p>
+                                                <p class="text-sm font-bold" x-text="currentPath.estimated_hours + ' horas'"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-gray-600">
+                                            <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
+                                                <svg class="w-4.5 h-4.5 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-400">Milestones</p>
+                                                <p class="text-sm font-bold" x-text="currentPath.milestones ? currentPath.milestones.length + ' hitos' : '...'"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-gray-600">
+                                            <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
+                                                <svg class="w-4.5 h-4.5 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-400">Recursos</p>
+                                                <p class="text-sm font-bold" x-text="totalResources + ' recursos'"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Start button (desktop) -->
+                                <div class="hidden md:block flex-shrink-0">
+                                    <button @click="startPath()"
+                                            class="btn-primary text-white font-semibold px-8 py-3.5 rounded-xl flex items-center gap-2 cursor-pointer text-sm">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/>
+                                        </svg>
+                                        Comenzar Ruta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones section -->
+                    <div x-show="currentPath.milestones && currentPath.milestones.length > 0">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Mapa de Aprendizaje</h2>
+                        <p class="text-gray-500 mb-8">Sigue estos hitos para completar tu ruta profesional</p>
+
+                        <!-- Milestone Timeline -->
+                        <div class="space-y-0">
+                            <template x-for="(milestone, mIdx) in currentPath.milestones" :key="milestone.id">
+                                <div class="relative animate-fade-in-up" :class="'stagger-' + ((mIdx % 6) + 1)">
+                                    <!-- Connecting line -->
+                                    <div x-show="mIdx < currentPath.milestones.length - 1" class="timeline-line"></div>
+
+                                    <div class="flex gap-5 pb-8">
+                                        <!-- Timeline dot -->
+                                        <div class="timeline-dot shadow-md"
+                                             :class="categoryStyle(currentPath.category).dot">
+                                            <span x-text="milestone.order_index || (mIdx + 1)"></span>
+                                        </div>
+
+                                        <!-- Milestone card -->
+                                        <div class="flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                            <!-- Milestone header -->
+                                            <button @click="toggleMilestone(mIdx)"
+                                                    class="w-full p-5 flex items-center justify-between text-left cursor-pointer hover:bg-gray-50/50 transition-colors">
+                                                <div class="flex-1 min-w-0 pr-4">
+                                                    <h3 class="text-base font-bold text-gray-900 mb-1" x-text="milestone.title"></h3>
+                                                    <p class="text-sm text-gray-500 line-clamp-2" x-text="milestone.description"></p>
+                                                </div>
+                                                <div class="flex items-center gap-3 flex-shrink-0">
+                                                    <span class="hidden sm:flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2.5 py-1 rounded-md">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                        </svg>
+                                                        <span x-text="milestone.estimated_hours + 'h'"></span>
+                                                    </span>
+                                                    <span class="hidden sm:flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2.5 py-1 rounded-md">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                                        </svg>
+                                                        <span x-text="(milestone.resources ? milestone.resources.length : 0) + ' recursos'"></span>
+                                                    </span>
+                                                    <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+                                                         :class="openMilestones.includes(mIdx) ? 'rotate-180' : ''"
+                                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                                                    </svg>
+                                                </div>
+                                            </button>
+
+                                            <!-- Resources (expandable) -->
+                                            <div x-show="openMilestones.includes(mIdx)"
+                                                 x-transition:enter="transition ease-out duration-200"
+                                                 x-transition:enter-start="opacity-0 -translate-y-2"
+                                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                                 class="border-t border-gray-100 bg-gray-50/40">
+                                                <div class="p-5 space-y-3">
+                                                    <template x-for="resource in milestone.resources" :key="resource.id">
+                                                        <a :href="resource.url" target="_blank" rel="noopener noreferrer"
+                                                           class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition-all group">
+                                                            <!-- Resource type icon -->
+                                                            <div class="resource-icon" :class="resourceStyle(resource.type).bg">
+                                                                <span x-html="resourceStyle(resource.type).icon"></span>
+                                                            </div>
+
+                                                            <div class="flex-1 min-w-0">
+                                                                <p class="text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate"
+                                                                   x-text="resource.title"></p>
+                                                                <div class="flex items-center gap-2 mt-0.5">
+                                                                    <span class="text-xs text-gray-400" x-text="resource.provider"></span>
+                                                                    <span class="text-gray-200">|</span>
+                                                                    <span class="text-xs font-medium uppercase tracking-wide"
+                                                                          :class="resourceStyle(resource.type).text"
+                                                                          x-text="resourceTypeLabel(resource.type)"></span>
+                                                                    <template x-if="resource.estimated_minutes">
+                                                                        <span class="text-xs text-gray-400 flex items-center gap-1">
+                                                                            <span class="text-gray-200">|</span>
+                                                                            <span x-text="Math.round(resource.estimated_minutes / 60) + 'h ' + (resource.estimated_minutes % 60) + 'min'"></span>
+                                                                        </span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="flex items-center gap-2 flex-shrink-0">
+                                                                <span x-show="resource.is_free"
+                                                                      class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-bold rounded-md">
+                                                                    Gratis
+                                                                </span>
+                                                                <svg class="w-4 h-4 text-gray-300 group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                                                </svg>
+                                                            </div>
+                                                        </a>
+                                                    </template>
+
+                                                    <!-- Empty resources -->
+                                                    <div x-show="!milestone.resources || milestone.resources.length === 0"
+                                                         class="text-center py-6 text-gray-400 text-sm">
+                                                        No hay recursos disponibles para este milestone
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Mobile CTA -->
+                    <div class="md:hidden fixed bottom-0 inset-x-0 p-4 bg-white/90 backdrop-blur-lg border-t border-gray-200 z-40">
+                        <button @click="startPath()"
+                                class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/>
+                            </svg>
+                            Comenzar Ruta
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+
+    <!-- ============================================================ -->
+    <!-- AUTH MODAL -->
+    <!-- ============================================================ -->
+    <div x-show="showAuthModal" x-cloak
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+         @keydown.escape.window="showAuthModal = false">
+
+        <!-- Backdrop -->
+        <div class="absolute inset-0 modal-backdrop" @click="showAuthModal = false"
+             x-show="showAuthModal"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"></div>
+
+        <!-- Modal -->
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+             x-show="showAuthModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+
+            <!-- Modal header gradient -->
+            <div class="hero-gradient px-8 pt-8 pb-6 text-center relative overflow-hidden">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-400/10 rounded-full blur-2xl"></div>
+                </div>
+                <div class="relative">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-1"
+                        x-text="authMode === 'login' ? 'Bienvenido de vuelta' : 'Crea tu cuenta'"></h2>
+                    <p class="text-primary-200 text-sm"
+                       x-text="authMode === 'login' ? 'Inicia sesion para continuar tu aprendizaje' : 'Comienza tu camino en tecnologia'"></p>
+                </div>
+            </div>
+
+            <!-- Close button -->
+            <button @click="showAuthModal = false"
+                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <!-- Form body -->
+            <div class="p-8">
+                <!-- Error message -->
+                <div x-show="authError" x-transition class="mb-5 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-sm text-red-700" x-text="authError"></p>
+                </div>
+
+                <!-- Success message -->
+                <div x-show="authSuccess" x-transition class="mb-5 p-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-2">
+                    <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-sm text-green-700" x-text="authSuccess"></p>
+                </div>
+
+                <form @submit.prevent="submitAuth()">
+                    <!-- Display name (register only) -->
+                    <div x-show="authMode === 'register'" class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nombre</label>
+                        <input type="text" x-model="authForm.display_name"
+                               placeholder="Tu nombre"
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-shadow">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
+                        <input type="email" x-model="authForm.email" required
+                               placeholder="tu@email.com"
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-shadow">
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Contrasena</label>
+                        <div class="relative">
+                            <input :type="showPassword ? 'text' : 'password'" x-model="authForm.password" required
+                                   placeholder="Minimo 6 caracteres"
+                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-shadow pr-12">
+                            <button type="button" @click="showPassword = !showPassword"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" :disabled="authLoading"
+                            class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                        <svg x-show="authLoading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-text="authLoading ? 'Procesando...' : (authMode === 'login' ? 'Iniciar Sesion' : 'Crear Cuenta')"></span>
+                    </button>
+                </form>
+
+                <!-- Toggle mode -->
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    <span x-text="authMode === 'login' ? 'No tienes cuenta?' : 'Ya tienes cuenta?'"></span>
+                    <button @click="toggleAuthMode()" class="text-primary-600 font-semibold hover:text-primary-700 cursor-pointer ml-1"
+                            x-text="authMode === 'login' ? 'Registrate' : 'Inicia sesion'"></button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- TOAST NOTIFICATIONS -->
+    <!-- ============================================================ -->
+    <div class="fixed bottom-6 right-6 z-[110] space-y-3">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-show="toast.visible"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-x-8"
+                 x-transition:enter-end="opacity-100 translate-x-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-x-0"
+                 x-transition:leave-end="opacity-0 translate-x-8"
+                 class="flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-xl border max-w-sm"
+                 :class="toast.type === 'success'
+                     ? 'bg-green-50 border-green-200 text-green-800'
+                     : toast.type === 'error'
+                         ? 'bg-red-50 border-red-200 text-red-800'
+                         : 'bg-primary-50 border-primary-200 text-primary-800'">
+                <svg x-show="toast.type === 'success'" class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                </svg>
+                <svg x-show="toast.type === 'error'" class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                </svg>
+                <svg x-show="toast.type === 'info'" class="w-5 h-5 text-primary-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-sm font-medium" x-text="toast.message"></p>
+            </div>
+        </template>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================================ -->
+    <footer class="bg-gray-900 text-gray-400 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-500 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                        </svg>
+                    </div>
+                    <span class="text-white font-bold text-lg">SkillPath</span>
+                </div>
+                <p class="text-sm text-gray-500">
+                    Creado por <span class="text-gray-300 font-medium">Ronald</span> &middot; Tu ruta hacia tu carrera tech
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ============================================================ -->
+    <!-- ALPINE.JS APPLICATION -->
+    <!-- ============================================================ -->
+    <script>
+        const API_BASE = 'http://localhost:3005/api/v1';
+
+        function skillpath() {
+            return {
+                // State
+                currentView: 'list',
+                scrolled: false,
+                loading: true,
+                loadingDetail: false,
+
+                // Data
+                paths: [],
+                categories: [],
+                currentPath: null,
+                selectedCategory: 'all',
+                searchQuery: '',
+                searchResults: null,
+                openMilestones: [],
+
+                // Auth
+                user: null,
+                token: null,
+                showAuthModal: false,
+                authMode: 'login',
+                authLoading: false,
+                authError: '',
+                authSuccess: '',
+                showPassword: false,
+                authForm: {
+                    email: '',
+                    password: '',
+                    display_name: ''
+                },
+                pendingStartSlug: null,
+
+                // Toasts
+                toasts: [],
+                toastCounter: 0,
+
+                // Init
+                async init() {
+                    this.restoreSession();
+                    await this.loadPaths();
+                    await this.loadCategories();
+                },
+
+                // ---- API CALLS ----
+
+                async loadPaths() {
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`${API_BASE}/paths`);
+                        const data = await res.json();
+                        this.paths = data.paths || [];
+                    } catch (e) {
+                        this.showToast('Error al cargar las rutas', 'error');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async loadCategories() {
+                    try {
+                        const res = await fetch(`${API_BASE}/paths/categories`);
+                        const data = await res.json();
+                        if (Array.isArray(data)) {
+                            this.categories = data.map(c => typeof c === 'string' ? c : c.name);
+                        }
+                    } catch (e) {
+                        this.categories = ['Backend', 'Frontend', 'Data', 'Mobile'];
+                    }
+                },
+
+                async viewPath(slug) {
+                    this.currentView = 'detail';
+                    this.loadingDetail = true;
+                    this.openMilestones = [];
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    try {
+                        const res = await fetch(`${API_BASE}/paths/${slug}`);
+                        if (!res.ok) throw new Error('Path not found');
+                        this.currentPath = await res.json();
+                        // Auto-open first milestone
+                        if (this.currentPath.milestones && this.currentPath.milestones.length > 0) {
+                            this.openMilestones = [0];
+                        }
+                    } catch (e) {
+                        this.showToast('Error al cargar la ruta', 'error');
+                        this.goHome();
+                    } finally {
+                        this.loadingDetail = false;
+                    }
+                },
+
+                async search() {
+                    const q = this.searchQuery.trim();
+                    if (!q) {
+                        this.searchResults = null;
+                        return;
+                    }
+
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(q)}`);
+                        const data = await res.json();
+                        this.searchResults = data.paths || [];
+                    } catch (e) {
+                        this.showToast('Error en la busqueda', 'error');
+                        this.searchResults = [];
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                clearSearch() {
+                    this.searchQuery = '';
+                    this.searchResults = null;
+                },
+
+                async startPath() {
+                    if (!this.token) {
+                        this.pendingStartSlug = this.currentPath?.slug;
+                        this.showAuthModal = true;
+                        this.authMode = 'register';
+                        return;
+                    }
+
+                    try {
+                        const slug = this.currentPath?.slug;
+                        if (!slug) return;
+
+                        const res = await fetch(`${API_BASE}/paths/${slug}/start`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (res.ok) {
+                            this.showToast('Ruta iniciada con exito! Comienza tu aprendizaje.', 'success');
+                        } else {
+                            const data = await res.json();
+                            if (data.message && data.message.toLowerCase().includes('already')) {
+                                this.showToast('Ya estas inscrito en esta ruta. Sigue adelante!', 'info');
+                            } else {
+                                throw new Error(data.message || 'Error');
+                            }
+                        }
+                    } catch (e) {
+                        if (e.message && !e.message.includes('already')) {
+                            this.showToast('Error al iniciar la ruta: ' + e.message, 'error');
+                        }
+                    }
+                },
+
+                // ---- AUTH ----
+
+                async submitAuth() {
+                    this.authError = '';
+                    this.authSuccess = '';
+                    this.authLoading = true;
+
+                    const endpoint = this.authMode === 'login' ? '/auth/login' : '/auth/register';
+                    const body = this.authMode === 'login'
+                        ? { email: this.authForm.email, password: this.authForm.password }
+                        : { email: this.authForm.email, password: this.authForm.password, display_name: this.authForm.display_name };
+
+                    try {
+                        const res = await fetch(`${API_BASE}${endpoint}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        });
+
+                        const data = await res.json();
+
+                        if (!res.ok) {
+                            this.authError = data.message || data.error || 'Error en la autenticacion';
+                            return;
+                        }
+
+                        this.token = data.token;
+                        this.user = data.user;
+                        this.saveSession();
+
+                        this.authSuccess = this.authMode === 'login'
+                            ? 'Sesion iniciada correctamente!'
+                            : 'Cuenta creada exitosamente!';
+
+                        this.showToast(this.authSuccess, 'success');
+
+                        setTimeout(() => {
+                            this.showAuthModal = false;
+                            this.resetAuthForm();
+
+                            if (this.pendingStartSlug) {
+                                this.pendingStartSlug = null;
+                                this.startPath();
+                            }
+                        }, 800);
+
+                    } catch (e) {
+                        this.authError = 'Error de conexion. Verifica que el servidor esta activo.';
+                    } finally {
+                        this.authLoading = false;
+                    }
+                },
+
+                toggleAuthMode() {
+                    this.authMode = this.authMode === 'login' ? 'register' : 'login';
+                    this.authError = '';
+                    this.authSuccess = '';
+                },
+
+                resetAuthForm() {
+                    this.authForm = { email: '', password: '', display_name: '' };
+                    this.authError = '';
+                    this.authSuccess = '';
+                    this.showPassword = false;
+                },
+
+                logout() {
+                    this.token = null;
+                    this.user = null;
+                    localStorage.removeItem('skillpath_token');
+                    localStorage.removeItem('skillpath_user');
+                    this.showToast('Sesion cerrada', 'info');
+                },
+
+                saveSession() {
+                    localStorage.setItem('skillpath_token', this.token);
+                    localStorage.setItem('skillpath_user', JSON.stringify(this.user));
+                },
+
+                restoreSession() {
+                    const t = localStorage.getItem('skillpath_token');
+                    const u = localStorage.getItem('skillpath_user');
+                    if (t && u) {
+                        this.token = t;
+                        try { this.user = JSON.parse(u); } catch(e) { this.user = null; }
+                    }
+                },
+
+                // ---- NAVIGATION ----
+
+                goHome() {
+                    this.currentView = 'list';
+                    this.currentPath = null;
+                    this.openMilestones = [];
+                },
+
+                toggleMilestone(idx) {
+                    const pos = this.openMilestones.indexOf(idx);
+                    if (pos > -1) {
+                        this.openMilestones.splice(pos, 1);
+                    } else {
+                        this.openMilestones.push(idx);
+                    }
+                },
+
+                // ---- COMPUTED ----
+
+                get filteredPaths() {
+                    let list = this.searchResults !== null ? this.searchResults : this.paths;
+                    if (this.selectedCategory !== 'all' && this.searchResults === null) {
+                        list = list.filter(p => p.category === this.selectedCategory);
+                    }
+                    return list;
+                },
+
+                get totalResources() {
+                    if (!this.currentPath?.milestones) return 0;
+                    return this.currentPath.milestones.reduce((sum, m) => sum + (m.resources ? m.resources.length : 0), 0);
+                },
+
+                // ---- STYLING HELPERS ----
+
+                categoryStyle(cat) {
+                    const styles = {
+                        Backend: {
+                            badge: 'bg-blue-50 text-blue-700',
+                            bar: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                            active: 'bg-blue-600 text-white shadow-lg shadow-blue-500/30',
+                            dot: 'bg-blue-600 text-white shadow-blue-500/30',
+                            iconBg: 'bg-blue-50'
+                        },
+                        Frontend: {
+                            badge: 'bg-emerald-50 text-emerald-700',
+                            bar: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+                            active: 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30',
+                            dot: 'bg-emerald-600 text-white shadow-emerald-500/30',
+                            iconBg: 'bg-emerald-50'
+                        },
+                        Data: {
+                            badge: 'bg-purple-50 text-purple-700',
+                            bar: 'bg-gradient-to-r from-purple-500 to-purple-600',
+                            active: 'bg-purple-600 text-white shadow-lg shadow-purple-500/30',
+                            dot: 'bg-purple-600 text-white shadow-purple-500/30',
+                            iconBg: 'bg-purple-50'
+                        },
+                        Mobile: {
+                            badge: 'bg-orange-50 text-orange-700',
+                            bar: 'bg-gradient-to-r from-orange-500 to-orange-600',
+                            active: 'bg-orange-600 text-white shadow-lg shadow-orange-500/30',
+                            dot: 'bg-orange-600 text-white shadow-orange-500/30',
+                            iconBg: 'bg-orange-50'
+                        }
+                    };
+                    return styles[cat] || styles.Backend;
+                },
+
+                categoryIcon(cat) {
+                    const icons = {
+                        Backend: '\u2699\uFE0F',
+                        Frontend: '\uD83C\uDFA8',
+                        Data: '\uD83D\uDCCA',
+                        Mobile: '\uD83D\uDCF1'
+                    };
+                    return icons[cat] || '\uD83D\uDCBB';
+                },
+
+                difficultyStyle(d) {
+                    const styles = {
+                        beginner: 'bg-green-50 text-green-700 border border-green-200',
+                        intermediate: 'bg-amber-50 text-amber-700 border border-amber-200',
+                        advanced: 'bg-red-50 text-red-700 border border-red-200'
+                    };
+                    return styles[d] || styles.beginner;
+                },
+
+                difficultyLabel(d) {
+                    const labels = {
+                        beginner: 'Principiante',
+                        intermediate: 'Intermedio',
+                        advanced: 'Avanzado'
+                    };
+                    return labels[d] || d;
+                },
+
+                resourceStyle(type) {
+                    const styles = {
+                        course: {
+                            bg: 'bg-blue-50',
+                            text: 'text-blue-600',
+                            icon: '<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>'
+                        },
+                        tutorial: {
+                            bg: 'bg-emerald-50',
+                            text: 'text-emerald-600',
+                            icon: '<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>'
+                        },
+                        video: {
+                            bg: 'bg-red-50',
+                            text: 'text-red-600',
+                            icon: '<svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>'
+                        },
+                        book: {
+                            bg: 'bg-amber-50',
+                            text: 'text-amber-600',
+                            icon: '<svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>'
+                        },
+                        article: {
+                            bg: 'bg-purple-50',
+                            text: 'text-purple-600',
+                            icon: '<svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>'
+                        },
+                        exercise: {
+                            bg: 'bg-indigo-50',
+                            text: 'text-indigo-600',
+                            icon: '<svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>'
+                        }
+                    };
+                    return styles[type] || styles.article;
+                },
+
+                resourceTypeLabel(type) {
+                    const labels = {
+                        course: 'Curso',
+                        tutorial: 'Tutorial',
+                        video: 'Video',
+                        book: 'Libro',
+                        article: 'Articulo',
+                        exercise: 'Ejercicio'
+                    };
+                    return labels[type] || type;
+                },
+
+                // ---- TOAST SYSTEM ----
+
+                showToast(message, type = 'info') {
+                    const id = ++this.toastCounter;
+                    const toast = { id, message, type, visible: true };
+                    this.toasts.push(toast);
+                    setTimeout(() => {
+                        const t = this.toasts.find(t => t.id === id);
+                        if (t) t.visible = false;
+                        setTimeout(() => {
+                            this.toasts = this.toasts.filter(t => t.id !== id);
+                        }, 300);
+                    }, 4000);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
