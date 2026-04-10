@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skillpath-api
+    ports:
+      - "3005:3005"
+    environment:
+      - SERVER_PORT=3005
+      - GIN_MODE=release
+      - DB_PATH=/app/data/skillpath.db
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - JWT_EXPIRY_HOURS=72
+      - CORS_ORIGINS=http://localhost:3000
+    volumes:
+      - app-data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - skillpath-net
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: skillpath-db
+    environment:
+      POSTGRES_USER: skillpath
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-skillpath123}
+      POSTGRES_DB: skillpath
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skillpath"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - skillpath-net
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: skillpath-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=15d"
+    depends_on:
+      - backend
+    networks:
+      - skillpath-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: skillpath-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - skillpath-net
+    restart: unless-stopped
+
+volumes:
+  app-data:
+  pgdata:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  skillpath-net:
+    driver: bridge

@@ -1,0 +1,11 @@
+aws_region      = "us-east-1"
+project_name    = "skillpath"
+environment     = "prod"
+container_image = "ghcr.io/ronalc90/skill-path:latest"
+container_port  = 3005
+task_cpu        = "256"
+task_memory     = "512"
+desired_count   = 2
+max_count       = 6
+jwt_secret      = "CHANGE_ME"
+cors_origins    = "https://skillpath.example.com"

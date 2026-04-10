@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skillpath-config
+  namespace: skillpath
+  labels:
+    app: skillpath
+data:
+  SERVER_PORT: "3005"
+  GIN_MODE: "release"
+  DB_PATH: "/app/data/skillpath.db"
+  JWT_EXPIRY_HOURS: "72"
+  CORS_ORIGINS: "https://skillpath.example.com"

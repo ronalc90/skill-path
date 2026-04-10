@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/ronalc90/skillpath/internal/config"
 	"github.com/ronalc90/skillpath/internal/handler"
 	"github.com/ronalc90/skillpath/internal/middleware"
@@ -27,6 +28,7 @@ func Setup(
 	// Global middleware
 	r.Use(middleware.Recovery())
 	r.Use(middleware.Logging())
+	r.Use(middleware.Metrics())
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     strings.Split(cfg.CORSOrigins, ","),
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -39,6 +41,9 @@ func Setup(
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
+
+	// Prometheus metrics endpoint
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	api := r.Group("/api/v1")
 
