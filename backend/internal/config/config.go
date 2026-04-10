@@ -29,7 +29,7 @@ func Load() (*Config, error) {
 		DBPath:       getEnv("DB_PATH", "skillpath.db"),
 		JWTSecret:    getEnv("JWT_SECRET", "default-secret-change-me"),
 		JWTExpiryHrs: jwtExpiry,
-		CORSOrigins:  getEnv("CORS_ORIGINS", "http://localhost:3000"),
+		CORSOrigins:  getEnv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3015"),
 	}
 
 	return cfg, nil

@@ -88,6 +88,12 @@ func TestGetDashboard_WithProgress(t *testing.T) {
 	_, err := progressService.StartPath(user.ID, path.ID)
 	require.NoError(t, err)
 
+	// Complete resources of first milestone before completing it
+	for _, res := range path.Milestones[0].Resources {
+		err = progressService.CompleteResource(user.ID, path.ID, res.ID, 0)
+		require.NoError(t, err)
+	}
+
 	// Complete a milestone
 	err = progressService.CompleteMilestone(user.ID, path.ID, path.Milestones[0].ID)
 	require.NoError(t, err)

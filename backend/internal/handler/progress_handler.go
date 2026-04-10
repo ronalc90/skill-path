@@ -98,6 +98,10 @@ func (h *ProgressHandler) CompleteMilestone(c *gin.Context) {
 			c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "not_enrolled", Message: "Not enrolled in this path"})
 			return
 		}
+		if errors.Is(err, service.ErrResourcesNotCompleted) {
+			c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "resources_incomplete", Message: "Debes completar todos los recursos del milestone antes de marcarlo como completado"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "internal_error", Message: "Failed to complete milestone"})
 		return
 	}
