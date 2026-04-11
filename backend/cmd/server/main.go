@@ -21,7 +21,7 @@ func main() {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	db, err := gorm.Open(sqlite.Open("skillpath.db"), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open(cfg.DBPath), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {

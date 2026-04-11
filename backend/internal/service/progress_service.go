@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	ErrAlreadyEnrolled = errors.New("already enrolled in this path")
-	ErrNotEnrolled     = errors.New("not enrolled in this path")
-	ErrPathNotFound    = errors.New("learning path not found")
+	ErrAlreadyEnrolled         = errors.New("already enrolled in this path")
+	ErrNotEnrolled             = errors.New("not enrolled in this path")
+	ErrPathNotFound            = errors.New("learning path not found")
+	ErrResourcesNotCompleted   = errors.New("all resources must be completed before completing the milestone")
 )
 
 // ProgressService handles progress tracking business logic.
@@ -119,10 +120,26 @@ func (s *ProgressService) GetPathProgress(userID, pathID uint) (*dto.UserPathPro
 }
 
 // CompleteMilestone marks a milestone as completed for a user.
+// All resources in the milestone must be completed first.
 func (s *ProgressService) CompleteMilestone(userID, pathID, milestoneID uint) error {
 	progress, err := s.progressRepo.FindUserProgress(userID, pathID)
 	if err != nil {
 		return ErrNotEnrolled
+	}
+
+	// Validate that all resources in the milestone are completed
+	totalResources, err := s.progressRepo.CountResourcesForMilestone(milestoneID)
+	if err != nil {
+		return err
+	}
+	if totalResources > 0 {
+		completedResources, err := s.progressRepo.CountCompletedResourcesForMilestone(progress.ID, milestoneID)
+		if err != nil {
+			return err
+		}
+		if completedResources < totalResources {
+			return ErrResourcesNotCompleted
+		}
 	}
 
 	now := time.Now()

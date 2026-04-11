@@ -174,11 +174,21 @@ func TestCompleteMilestone_Success(t *testing.T) {
 	r.PUT("/api/v1/paths/:slug/milestones/:milestoneId/complete", authMiddleware, progressHandler.CompleteMilestone)
 	r.GET("/api/v1/paths/:slug/progress", authMiddleware, progressHandler.GetPathProgress)
 
+	r.PUT("/api/v1/paths/:slug/resources/:resourceId/complete", authMiddleware, progressHandler.CompleteResource)
+
 	// Enroll first
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/paths/%s/start", path.Slug), nil)
 	r.ServeHTTP(w, req)
 	require.Equal(t, http.StatusCreated, w.Code)
+
+	// Complete resources of first milestone before completing it
+	for _, res := range path.Milestones[0].Resources {
+		w = httptest.NewRecorder()
+		req, _ = http.NewRequest("PUT", fmt.Sprintf("/api/v1/paths/%s/resources/%d/complete", path.Slug, res.ID), nil)
+		r.ServeHTTP(w, req)
+		require.Equal(t, http.StatusOK, w.Code)
+	}
 
 	// Complete first milestone
 	w = httptest.NewRecorder()

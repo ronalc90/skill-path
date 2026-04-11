@@ -225,6 +225,24 @@ func (r *ProgressRepository) CountCompletedMilestones(userProgressID uint) (int6
 	return count, err
 }
 
+func (r *ProgressRepository) CountCompletedResourcesForMilestone(userProgressID, milestoneID uint) (int64, error) {
+	var count int64
+	err := r.db.Model(&model.ResourceProgress{}).
+		Where("user_progress_id = ? AND is_completed = ? AND resource_id IN (?)",
+			userProgressID, true,
+			r.db.Model(&model.Resource{}).Select("id").Where("milestone_id = ?", milestoneID),
+		).Count(&count).Error
+	return count, err
+}
+
+func (r *ProgressRepository) CountResourcesForMilestone(milestoneID uint) (int64, error) {
+	var count int64
+	err := r.db.Model(&model.Resource{}).
+		Where("milestone_id = ?", milestoneID).
+		Count(&count).Error
+	return count, err
+}
+
 // AssessmentRepository handles database operations for assessments.
 type AssessmentRepository struct {
 	db *gorm.DB
