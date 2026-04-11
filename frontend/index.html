@@ -7,7 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50' y='70' font-size='55' text-anchor='middle'>🎓</text></svg>">
     <meta name="theme-color" content="#4f46e5">
     <meta name="author" content="Ronald">
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <script>
@@ -258,7 +257,7 @@
         </div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-            <div class="text-center max-w-4xl mx-auto" data-aos="fade-right">
+            <div class="text-center max-w-4xl mx-auto">
                 <div class="animate-fade-in-up">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-primary-200 text-sm font-medium mb-6">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -379,13 +378,13 @@
             </div>
 
             <!-- Section title -->
-            <div class="text-center mb-10 pt-4" x-show="!searchQuery" data-aos="fade-up">
+            <div class="text-center mb-10 pt-4" x-show="!searchQuery">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Explora las Rutas de Aprendizaje</h2>
                 <p class="text-gray-500 text-lg max-w-2xl mx-auto">Elige tu camino y comienza a construir tu carrera en tecnologia hoy mismo</p>
             </div>
 
             <!-- Category Filters -->
-            <div class="flex flex-wrap justify-center gap-2 mb-10" x-show="!searchQuery" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex flex-wrap justify-center gap-2 mb-10" x-show="!searchQuery">
                 <button @click="selectedCategory = 'all'"
                         :class="selectedCategory === 'all'
                             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
@@ -417,7 +416,7 @@
             </div>
 
             <!-- Path Cards Grid -->
-            <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" data-aos="fade-up" data-aos-delay="200">
+            <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <template x-for="(path, index) in filteredPaths" :key="path.id">
                     <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm animate-fade-in-up cursor-pointer group"
                          :class="'stagger-' + ((index % 6) + 1)"
@@ -1595,7 +1594,5 @@
             };
         }
     </script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 800, once: true, offset: 50 });</script>
 </body>
 </html>
