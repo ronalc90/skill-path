@@ -10,7 +10,6 @@ bin/
 
 # Go
 vendor/
-go.sum
 tmp/
 coverage.out
 coverage.html
