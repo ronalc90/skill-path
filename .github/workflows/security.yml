@@ -23,7 +23,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: backend/go.sum
 
       - name: Run gosec
@@ -72,13 +72,13 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: backend/go.sum
 
       - name: Run golangci-lint with security presets
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v1.57
+          version: v2.15
           working-directory: backend
           args: --enable=gosec,gocritic,bodyclose,errcheck --timeout=5m
 
