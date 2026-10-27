@@ -7,7 +7,7 @@ Esta guia cubre la configuracion inicial y los primeros pasos para ejecutar Skil
 | Herramienta | Version | Verificar |
 |-------------|---------|-----------|
 | Go | 1.22+ | `go version` |
-| Node.js | 18+ | `node --version` |
+| Node.js | 22+ | `node --version` |
 | npm | 9+ | `npm --version` |
 | Git | 2.x | `git --version` |
 

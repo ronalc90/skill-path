@@ -96,7 +96,7 @@ Cada capa depende solo de la capa inmediatamente inferior. Los handlers no conoc
 ### Prerequisitos
 
 - Go 1.22+
-- Node.js 18+
+- Node.js 22+
 - npm 9+
 
 ### Backend
