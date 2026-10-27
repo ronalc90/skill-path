@@ -5,7 +5,7 @@ Gracias por tu interes en contribuir a SkillPath. Esta guia describe el proceso 
 ## Requisitos Previos
 
 - Go 1.22+
-- Node.js 18+
+- Node.js 22+
 - Git
 
 ## Configuracion del Entorno

@@ -81,7 +81,7 @@ func TestRegister_Success(t *testing.T) {
 		Password:    "password123",
 		DisplayName: "Test User",
 	}
-	jsonBody, _ := json.Marshal(body)
+	jsonBody, _ := json.Marshal(body) //nolint:gosec // G117: credenciales ficticias de prueba
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(jsonBody))
@@ -109,7 +109,7 @@ func TestRegister_DuplicateEmail(t *testing.T) {
 		Password:    "password123",
 		DisplayName: "First User",
 	}
-	jsonBody, _ := json.Marshal(body)
+	jsonBody, _ := json.Marshal(body) //nolint:gosec // G117: credenciales ficticias de prueba
 
 	// First registration
 	w := httptest.NewRecorder()
@@ -159,7 +159,7 @@ func TestLogin_Success(t *testing.T) {
 		Password:    "password123",
 		DisplayName: "Login User",
 	}
-	jsonBody, _ := json.Marshal(regBody)
+	jsonBody, _ := json.Marshal(regBody) //nolint:gosec // G117: credenciales ficticias de prueba
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(jsonBody))
@@ -172,7 +172,7 @@ func TestLogin_Success(t *testing.T) {
 		Email:    "login@example.com",
 		Password: "password123",
 	}
-	jsonBody, _ = json.Marshal(loginBody)
+	jsonBody, _ = json.Marshal(loginBody) //nolint:gosec // G117: credenciales ficticias de prueba
 
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(jsonBody))
@@ -198,7 +198,7 @@ func TestLogin_InvalidCredentials(t *testing.T) {
 		Email:    "nonexistent@example.com",
 		Password: "wrongpassword",
 	}
-	jsonBody, _ := json.Marshal(loginBody)
+	jsonBody, _ := json.Marshal(loginBody) //nolint:gosec // G117: credenciales ficticias de prueba
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(jsonBody))
